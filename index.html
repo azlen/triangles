@@ -1,0 +1,134 @@
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+	<script src="prefixfree.min.js"></script>
+	<style>
+		html,body{
+			margin:0px;
+			padding:0px;
+			background-color: #fff;
+			height:100%;
+		}
+		*{position: relative;}
+		#c{
+			position: absolute;
+			z-index: 0;
+			top:0px;
+			left:0px;
+		}
+		#gradient{
+			position: absolute;
+			z-index: 1;
+			top:0px;
+			left:0px;
+			width:100%;
+			height:600px;
+			background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 100%);
+		}
+		h1{
+			font-family: Oswald;
+			color:#333;
+			text-align: center;
+			font-size: 100px;
+			padding-top:200px;
+			z-index: 666;
+			animation:test 1s;
+		}
+		@keyframes test{
+			0%{
+				opacity: 0;
+				padding-top:150px;
+			}
+			100%{
+				opacity: 1;
+				padding-top:200px;
+			}
+		}
+
+		#range{
+			position: absolute;
+			top:0px;
+			left:0px;
+			width:500px;
+			z-index: 666;
+			opacity: 0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="c" height="600px"></canvas>
+	<div id="gradient"></div>
+
+	<h1>Welcome</h1>
+
+	<input id="range"type="range" min="0" max="360" step="5" value="180" onchange="if(this.value === '0'){this.value = 360}else if(this.value === '360'){this.value = 0};color=Number(this.value);update();"/>
+	<script>
+		var canvas = document.querySelector('#c');
+		var ctx = canvas.getContext('2d');
+
+		var size = 100;
+		var randomness = 75;
+
+		var color = 180;
+
+		var points = [];
+		var colorthing = [];
+
+		for(x = 0; x < 4000/size; x++){
+			points[x] = [];
+			for(y = 0; y < canvas.height/size*2; y++){
+				points[x][y] = [x*size+(Math.random()*randomness-randomness/2),y*size+(Math.random()*randomness-randomness/2)];
+			}
+		}
+
+		for(x = 0; x < points.length; x++){
+			for(y = 0; y < points[x].length; y++){
+				colorthing.push([Math.random()*40,Math.random()*20]);
+				colorthing.push([Math.random()*40,Math.random()*20]);
+			}
+		}
+
+		
+
+		window.onresize = update;
+		function update(){
+			canvas.width = window.innerWidth;
+
+			for(x = 0; x < Math.ceil(canvas.width/size)+2; x++){
+				for(y = 0; y < points[x].length-1; y++){
+					ctx.beginPath();
+					ctx.moveTo(points[x][y][0]-randomness,points[x][y][1]-randomness);
+					ctx.lineTo(points[x][y+1][0]-randomness,points[x][y+1][1]-randomness);
+					ctx.lineTo(points[x+1][y][0]-randomness,points[x+1][y][1]-randomness);
+					ctx.closePath();
+					var c = "hsl("+(color+(x+y)*3)+","+Math.floor(60+colorthing[x*y*2+y*2][0])+"%,"+Math.floor(40+colorthing[x*y*2+y*2][1])+"%)";
+					ctx.fillStyle = c;
+					ctx.strokeStyle = c;
+					ctx.fill();
+					ctx.stroke();
+
+					ctx.beginPath();
+					ctx.moveTo(points[x+1][y][0]-randomness,points[x+1][y][1]-randomness);
+					ctx.lineTo(points[x+1][y+1][0]-randomness,points[x+1][y+1][1]-randomness);
+					ctx.lineTo(points[x][y+1][0]-randomness,points[x][y+1][1]-randomness);
+					ctx.closePath();
+					var c = "hsl("+(color+(x+y)*3)+","+Math.floor(60+colorthing[x*y*2+y*2+1][0])+"%,"+Math.floor(40+colorthing[x*y*2+y*2+1][1])+"%)";
+					ctx.fillStyle = c;
+					ctx.strokeStyle = c;
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+
+			
+		}
+		update();
+
+		document.querySelector('#range').focus();
+
+		window.onclick = function(){
+			document.querySelector('#range').focus();
+		}
+	</script>
+</body>
+</html>
