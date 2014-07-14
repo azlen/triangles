@@ -1,2 +1,3 @@
 triangles
 =========
+Left and right arrow keys to change the color...
